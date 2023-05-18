@@ -226,4 +226,8 @@ export class ImageZoomState {
   public centerY?: number = 0.5;
 
   public scale?: number = 1;
+
+  public doubleClickX?: number = 0;
+
+  public doubleClickY?: number = 0;
 }

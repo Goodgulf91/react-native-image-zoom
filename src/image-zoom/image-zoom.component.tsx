@@ -51,8 +51,8 @@ export default class ImageViewer extends React.Component<ImageZoomProps, ImageZo
   private lastClickTime = 0;
 
   // 双击时的位置
-  private doubleClickX = 0;
-  private doubleClickY = 0;
+  public doubleClickX = 0;
+  public doubleClickY = 0;
 
   // 是否双击了
   private isDoubleClick = false;
@@ -605,7 +605,7 @@ export default class ImageViewer extends React.Component<ImageZoomProps, ImageZo
     this.animatedPositionY.setValue(this.positionY);
   }
 
-  public processScale = (x?: number, y?: number) => {
+  public processScale = () => {
     if (this.scale > 1 || this.scale < 1) {
       // Reset to original position
       this.scale = 1;
@@ -625,8 +625,8 @@ export default class ImageViewer extends React.Component<ImageZoomProps, ImageZo
 
       // Find the displacement of the center of both hands from the center of the page
       // Move the position
-      this.positionX = ((this.props.cropWidth / 2 - (x || this.doubleClickX)) * diffScale) / this.scale;
-      this.positionY = ((this.props.cropHeight / 2 - (y || this.doubleClickY)) * diffScale) / this.scale;
+      this.positionX = ((this.props.cropWidth / 2 - this.doubleClickX) * diffScale) / this.scale;
+      this.positionY = ((this.props.cropHeight / 2 - this.doubleClickY) * diffScale) / this.scale;
     }
 
     this.imageDidMove('centerOn');
