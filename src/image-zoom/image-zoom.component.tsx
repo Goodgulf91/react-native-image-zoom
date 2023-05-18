@@ -650,6 +650,11 @@ export default class ImageViewer extends React.Component<ImageZoomProps, ImageZo
     ]).start();
   };
 
+  public setDoubleClickPosition = (positionX: number, positionY: number) => {
+    this.doubleClickX = positionX;
+    this.doubleClickY = positionY;
+  };
+
   public render(): React.ReactNode {
     const animateConf = {
       transform: [
