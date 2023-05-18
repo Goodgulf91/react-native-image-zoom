@@ -604,28 +604,28 @@ export default class ImageViewer extends React.Component<ImageZoomProps, ImageZo
     this.animatedPositionY.setValue(this.positionY);
   }
 
-  public processScale = () => {
+  public processScale = (x?: number, y?: number) => {
     if (this.scale > 1 || this.scale < 1) {
-        // Reset to original position
-        this.scale = 1;
-        this.positionX = 0;
-        this.positionY = 0;
+      // Reset to original position
+      this.scale = 1;
+      this.positionX = 0;
+      this.positionY = 0;
     } else {
-        // Start zooming at the position
-        // Record the previous scale ratio
-        // At this point this.scale is definitely 1
-        const beforeScale = this.scale;
+      // Start zooming at the position
+      // Record the previous scale ratio
+      // At this point this.scale is definitely 1
+      const beforeScale = this.scale;
 
-        // Start zooming
-        this.scale = 2;
+      // Start zooming
+      this.scale = 2;
 
-        // Scale difference
-        const diffScale = this.scale - beforeScale;
+      // Scale difference
+      const diffScale = this.scale - beforeScale;
 
-        // Find the displacement of the center of both hands from the center of the page
-        // Move the position
-        this.positionX = ((this.props.cropWidth / 2 - this.doubleClickX) * diffScale) / this.scale;
-        this.positionY = ((this.props.cropHeight / 2 - this.doubleClickY) * diffScale) / this.scale;
+      // Find the displacement of the center of both hands from the center of the page
+      // Move the position
+      this.positionX = ((this.props.cropWidth / 2 - (x || this.doubleClickX)) * diffScale) / this.scale;
+      this.positionY = ((this.props.cropHeight / 2 - (y || this.doubleClickY)) * diffScale) / this.scale;
     }
 
     this.imageDidMove('centerOn');
@@ -647,7 +647,7 @@ export default class ImageViewer extends React.Component<ImageZoomProps, ImageZo
         useNativeDriver: !!this.props.useNativeDriver,
       }),
     ]).start();
-}
+  };
 
   public render(): React.ReactNode {
     const animateConf = {
