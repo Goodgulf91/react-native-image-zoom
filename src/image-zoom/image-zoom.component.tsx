@@ -18,7 +18,7 @@ export default class ImageViewer extends React.Component<ImageZoomProps, ImageZo
   private animatedPositionY = new Animated.Value(0);
 
   // 缩放大小
-  private scale = 1;
+  public scale = 1;
   private animatedScale = new Animated.Value(1);
   private zoomLastDistance: number | null = null;
   private zoomCurrentDistance = 0;
@@ -132,49 +132,7 @@ export default class ImageViewer extends React.Component<ImageZoomProps, ImageZo
           this.isDoubleClick = true;
 
           if (this.props.enableDoubleClickZoom) {
-            if (this.scale > 1 || this.scale < 1) {
-              // 回归原位
-              this.scale = 1;
-
-              this.positionX = 0;
-              this.positionY = 0;
-            } else {
-              // 开始在位移地点缩放
-              // 记录之前缩放比例
-              // 此时 this.scale 一定为 1
-              const beforeScale = this.scale;
-
-              // 开始缩放
-              this.scale = 2;
-
-              // 缩放 diff
-              const diffScale = this.scale - beforeScale;
-              // 找到两手中心点距离页面中心的位移
-              // 移动位置
-              this.positionX = ((this.props.cropWidth / 2 - this.doubleClickX) * diffScale) / this.scale;
-
-              this.positionY = ((this.props.cropHeight / 2 - this.doubleClickY) * diffScale) / this.scale;
-            }
-
-            this.imageDidMove('centerOn');
-
-            Animated.parallel([
-              Animated.timing(this.animatedScale, {
-                toValue: this.scale,
-                duration: 100,
-                useNativeDriver: !!this.props.useNativeDriver,
-              }),
-              Animated.timing(this.animatedPositionX, {
-                toValue: this.positionX,
-                duration: 100,
-                useNativeDriver: !!this.props.useNativeDriver,
-              }),
-              Animated.timing(this.animatedPositionY, {
-                toValue: this.positionY,
-                duration: 100,
-                useNativeDriver: !!this.props.useNativeDriver,
-              }),
-            ]).start();
+            this.processScale();
           }
         } else {
           this.lastClickTime = new Date().getTime();
@@ -645,6 +603,51 @@ export default class ImageViewer extends React.Component<ImageZoomProps, ImageZo
     this.positionY = 0;
     this.animatedPositionY.setValue(this.positionY);
   }
+
+  public processScale = () => {
+    if (this.scale > 1 || this.scale < 1) {
+        // Reset to original position
+        this.scale = 1;
+        this.positionX = 0;
+        this.positionY = 0;
+    } else {
+        // Start zooming at the position
+        // Record the previous scale ratio
+        // At this point this.scale is definitely 1
+        const beforeScale = this.scale;
+
+        // Start zooming
+        this.scale = 2;
+
+        // Scale difference
+        const diffScale = this.scale - beforeScale;
+
+        // Find the displacement of the center of both hands from the center of the page
+        // Move the position
+        this.positionX = ((this.props.cropWidth / 2 - this.doubleClickX) * diffScale) / this.scale;
+        this.positionY = ((this.props.cropHeight / 2 - this.doubleClickY) * diffScale) / this.scale;
+    }
+
+    this.imageDidMove('centerOn');
+
+    Animated.parallel([
+      Animated.timing(this.animatedScale, {
+        toValue: this.scale,
+        duration: 100,
+        useNativeDriver: !!this.props.useNativeDriver,
+      }),
+      Animated.timing(this.animatedPositionX, {
+        toValue: this.positionX,
+        duration: 100,
+        useNativeDriver: !!this.props.useNativeDriver,
+      }),
+      Animated.timing(this.animatedPositionY, {
+        toValue: this.positionY,
+        duration: 100,
+        useNativeDriver: !!this.props.useNativeDriver,
+      }),
+    ]).start();
+}
 
   public render(): React.ReactNode {
     const animateConf = {

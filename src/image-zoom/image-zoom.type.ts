@@ -84,6 +84,8 @@ export class ImageZoomProps {
    */
   public centerOn?: ICenterOn;
 
+  public processScale?: () => void;
+
   public style?: ViewStyle = {};
 
   /**
@@ -222,4 +224,6 @@ export class ImageZoomState {
    * 中心 y 坐标
    */
   public centerY?: number = 0.5;
+
+  public scale?: number = 1;
 }
