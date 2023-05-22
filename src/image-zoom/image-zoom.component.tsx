@@ -650,9 +650,39 @@ export default class ImageViewer extends React.Component<ImageZoomProps, ImageZo
     ]).start();
   };
 
-  public setDoubleClickPosition = (positionX: number, positionY: number) => {
+  public setDoubleClickPosition = (positionX: number, positionY: number): void => {
     this.doubleClickX = positionX;
     this.doubleClickY = positionY;
+
+    const horizontalMax = (this.props.imageWidth * this.scale - this.props.cropWidth) / 2 / this.scale;
+    if (this.positionX < -horizontalMax) {
+      // 超越了左边临界点，还在继续向左移动
+      this.positionX = -horizontalMax;
+
+      // 让其产生细微位移，偏离轨道
+      this.horizontalWholeOuterCounter += -1 / 1e10;
+    } else if (this.positionX > horizontalMax) {
+      // 超越了右侧临界点，还在继续向右移动
+      this.positionX = horizontalMax;
+
+      // 让其产生细微位移，偏离轨道
+      this.horizontalWholeOuterCounter += 1 / 1e10;
+    }
+
+    const verticalMax = (this.props.imageHeight * this.scale - this.props.cropHeight) / 2 / this.scale;
+    if (this.positionY < -verticalMax) {
+      // 超越了上边临界点，还在继续向上移动
+      this.positionY = -verticalMax;
+
+      // 让其产生细微位移，偏离轨道
+      this.horizontalWholeOuterCounter += -1 / 1e10;
+    } else if (this.positionY > verticalMax) {
+      // 超越了下侧临界点，还在继续向下移动
+      this.positionY = verticalMax;
+
+      // 让其产生细微位移，偏离轨道
+      this.horizontalWholeOuterCounter += 1 / 1e10;
+    }
 
     this.animatedPositionX.setValue(this.positionX);
     this.animatedPositionY.setValue(this.positionY);
